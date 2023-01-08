@@ -1,78 +1,67 @@
-import * as React from "react";
-import { DefaultButton } from "@fluentui/react";
-import Header from "./Header";
-import HeroList, { HeroListItem } from "./HeroList";
+import React, { VFC } from "react";
 import Progress from "./Progress";
+import { HashRouter, Route, Switch, Link } from "react-router-dom";
 
-/* global require */
-
-export interface AppProps {
+type AppProps = {
   title: string;
   isOfficeInitialized: boolean;
-}
+};
 
-export interface AppState {
-  listItems: HeroListItem[];
-}
+const Home: VFC = () => {
+  return <h2>Home</h2>;
+};
 
-export default class App extends React.Component<AppProps, AppState> {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      listItems: [],
-    };
-  }
+const About: VFC = () => {
+  return <h2>About</h2>;
+};
 
-  componentDidMount() {
-    this.setState({
-      listItems: [
-        {
-          icon: "Ribbon",
-          primaryText: "Achieve more with Office integration",
-        },
-        {
-          icon: "Unlock",
-          primaryText: "Unlock features and functionality",
-        },
-        {
-          icon: "Design",
-          primaryText: "Create and visualize like a pro",
-        },
-      ],
-    });
-  }
+const Users: VFC = () => {
+  return <h2>Users</h2>;
+};
 
-  click = async () => {
-    /**
-     * Insert your Outlook code here
-     */
-  };
+const App = (props: AppProps) => {
+  const { title, isOfficeInitialized } = props;
 
-  render() {
-    const { title, isOfficeInitialized } = this.props;
-
-    if (!isOfficeInitialized) {
-      return (
+  return (
+    <>
+      {isOfficeInitialized ? (
+        <HashRouter>
+          <div>
+            <nav>
+              <ul>
+                <li>
+                  <Link to="/">Home</Link>
+                </li>
+                <li>
+                  <Link to="/about">About</Link>
+                </li>
+                <li>
+                  <Link to="/users">Users</Link>
+                </li>
+              </ul>
+            </nav>
+            <Switch>
+              <Route path="/about">
+                <About />
+              </Route>
+              <Route path="/users">
+                <Users />
+              </Route>
+              <Route path="/">
+                <Home />
+              </Route>
+            </Switch>
+          </div>
+        </HashRouter>
+      ) : (
         <Progress
           title={title}
           logo={require("./../../../assets/logo-filled.png")}
           message="Please sideload your addin to see app body."
         />
-      );
-    }
+      )}
+    </>
+  );
+};
 
-    return (
-      <div className="ms-welcome">
-        <Header logo={require("./../../../assets/logo-filled.png")} title={this.props.title} message="Welcome" />
-        <HeroList message="Discover what Office Add-ins can do for you today!" items={this.state.listItems}>
-          <p className="ms-font-l">
-            Modify the source files, then click <b>Run</b>.
-          </p>
-          <DefaultButton className="ms-welcome__action" iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
-            Run
-          </DefaultButton>
-        </HeroList>
-      </div>
-    );
-  }
-}
+export default App;
